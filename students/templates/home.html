@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Student Manager{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <h1>Student Management</h1>
+    <p>Add students and manage their courses.</p>
+</section>
+
+<section class="card">
+    <h2>Add New Student</h2>
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" class="student-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="name">Student Name</label>
+            <input id="name" type="text" name="name" placeholder="Enter student name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input id="email" type="email" name="email" placeholder="Enter email address" required>
+        </div>
+
+        <div class="form-group">
+            <label for="course">Course</label>
+            <select id="course" name="course" required>
+                <option value="">Choose a course</option>
+                {% for course in courses %}
+                <option value="{{ course.id }}">
+                    {{ course.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Add Student
+        </button>
+    </form>
+</section>
+
+<section class="card">
+    <h2>All Students</h2>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.id }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.course.name }}</td>
+                    <td class="actions">
+                        <a class="btn btn-edit" href="{% url 'update_student' student.id %}">
+                            Edit
+                        </a>
+                        <a class="btn btn-delete" href="{% url 'delete_student' student.id %}">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty">
+                        No students have been added yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
